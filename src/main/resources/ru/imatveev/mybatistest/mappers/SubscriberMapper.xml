@@ -1,0 +1,36 @@
+<!DOCTYPE mapper     PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="ru.imatveev.mybatistest.mappers.SubscriberMapper">
+    <resultMap id="subscriber" type="Subscriber">
+        <id property="id" column="id"/>
+        <result property="name" column="name"/>
+        <association property="tariff" column="ref_tariff"
+                     javaType="Tariff"
+                     select="ru.imatveev.mybatistest.mappers.TariffMapper.getTariffById"
+                     fetchType="eager"/>
+        <collection
+                property="payments"
+                column="id"
+                javaType="List"
+                ofType="Payment"
+                select="ru.imatveev.mybatistest.mappers.PaymentMapper.getPaymentsByIdSub"
+                fetchType="eager"/>
+    </resultMap>
+
+    <select id="getSubscriberById" resultMap="subscriber" parameterType="java.lang.Integer">
+        select *
+        from subscriber
+        where id = #{id}
+    </select>
+
+    <select id="getSubscribers" resultMap="subscriber">
+        select *
+        from subscriber
+    </select>
+
+    <select id="getSubscribersWithParam" parameterType="map">
+        select * from subscriber where (1=1)
+        <if test="descr != null">
+            and descr = #{descr}
+        </if>
+    </select>
+</mapper>

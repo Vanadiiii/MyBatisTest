@@ -1,0 +1,32 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE configuration
+        PUBLIC "-//mybatis.org//DTD Config 3.0//EN"
+        "http://mybatis.org/dtd/mybatis-3-config.dtd">
+<configuration>
+    <properties
+            resource="application.properties">
+        <property name="mapperLocations" value="classpath*:mappers/*Mapper.xml"/>
+    </properties><!--ссылка на файл со свойствами(ссылка на СУБД, логин, пароль и тп.)-->
+    <settings><!--в данном блоке можно настроить много параметров. Полный список параметров http://mybatis.github.io/mybatis-3/configuration.html#settings-->
+        <setting name="logImpl" value="SLF4J"/>
+    </settings>
+    <typeAliases>
+        <typeAlias type="ru.imatveev.mybatistest.domain.entity.Tariff" alias="Tariff"/>
+        <typeAlias type="ru.imatveev.mybatistest.domain.entity.Subscriber" alias="Subscriber"/>
+        <typeAlias type="ru.imatveev.mybatistest.domain.entity.Payment" alias="Payment"/>
+    </typeAliases>
+    <environments default="prod"><!--в данном блоке настраиваются подключения к БД-->
+        <environment id="prod">
+            <transactionManager type="JDBC"/>
+            <dataSource type="POOLED">
+                <property name="driver" value="${db.driver}"/>
+                <property name="url" value="${db.url}"/>
+                <property name="username" value="${db.username}"/>
+                <property name="password" value="${db.password}"/>
+            </dataSource>
+        </environment>
+    </environments>
+    <mappers><!--в данном блоке необходимо описать маперы, которые используются в проекте-->
+        <package name="ru.imatveev.mybatistest.mappers"/>
+    </mappers>
+</configuration>
