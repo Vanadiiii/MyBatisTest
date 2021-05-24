@@ -1,35 +1,26 @@
 package ru.imatveev.mybatistest;
 
+import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
-import org.apache.ibatis.io.Resources;
-import org.apache.ibatis.session.SqlSessionFactory;
-import org.apache.ibatis.session.SqlSessionFactoryBuilder;
-import ru.imatveev.mybatistest.domain.entity.Subscriber;
+import org.springframework.boot.CommandLineRunner;
+import org.springframework.boot.SpringApplication;
+import org.springframework.boot.autoconfigure.SpringBootApplication;
 import ru.imatveev.mybatistest.mappers.SubscriberMapper;
 
-import java.io.IOException;
-import java.io.Reader;
-import java.util.List;
-
 @Slf4j
-public class MyBatisTestApplication {
+@SpringBootApplication
+@RequiredArgsConstructor
+public class MyBatisTestApplication implements CommandLineRunner {
+    private final SubscriberMapper subscriberMapper;
+
     public static void main(String[] args) {
-        try (Reader reader = Resources.getResourceAsReader("mybatis-config.xml")) {
-            SqlSessionFactory sqlSessionFactory = new SqlSessionFactoryBuilder()
-                    .build(reader);
-            SubscriberMapper subscriberMapper = sqlSessionFactory
-                    .openSession()
-                    .getMapper(SubscriberMapper.class);
+        SpringApplication.run(MyBatisTestApplication.class, args);
+    }
 
-            List<Subscriber> subscribers = subscriberMapper.getSubscribers();
-            Subscriber subscriber = subscriberMapper.getSubscriberById(1);
+    @Override
+    public void run(String... args) {
+        log.info("subscriber with id = {} -> {}", 1, subscriberMapper.getSubscriberById(1).getId());
 
-            System.out.println();
-            log.info("all subscribers -> {}", subscribers.toString());
-            log.info("subscriber with id = 1 -> {}", subscriber.toString());
-
-        } catch (IOException e) {
-            log.error(e.getMessage());
-        }
+        log.info("all subscribers -> {}", subscriberMapper.findAll());
     }
 }
