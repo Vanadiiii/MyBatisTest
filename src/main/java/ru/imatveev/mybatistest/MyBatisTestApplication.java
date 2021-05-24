@@ -19,8 +19,10 @@ public class MyBatisTestApplication implements CommandLineRunner {
 
     @Override
     public void run(String... args) {
-        log.info("subscriber with id = {} -> {}", 1, subscriberMapper.getSubscriberById(1).getId());
+        log.info("subscriber with id = {} -> {}", 1, subscriberMapper.getSubscriberById(1).orElseThrow());
 
-        log.info("all subscribers -> {}", subscriberMapper.findAll());
+        log.info("all subscribers with subSelects -> {}", subscriberMapper.findAllBySubSelects());
+
+        log.info("all subscribers by joins -> {}", subscriberMapper.findAllByJoins());
     }
 }

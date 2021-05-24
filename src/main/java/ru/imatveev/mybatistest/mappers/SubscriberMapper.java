@@ -6,6 +6,7 @@ import ru.imatveev.mybatistest.domain.entity.Subscriber;
 import ru.imatveev.mybatistest.domain.entity.Tariff;
 
 import java.util.List;
+import java.util.Optional;
 
 @Mapper
 public interface SubscriberMapper {
@@ -24,9 +25,27 @@ public interface SubscriberMapper {
                             javaType = Tariff.class,
                             one = @One(select = "ru.imatveev.mybatistest.mappers.TariffMapper.getTariffById", fetchType = FetchType.LAZY))
             })
-    Subscriber getSubscriberById(@Param("id") int id);
+    Optional<Subscriber> getSubscriberById(@Param("id") int id);
 
     @Select("select * from subscriber")
     @ResultMap("subscriberSubSelectMap")
-    List<Subscriber> findAll();
+    List<Subscriber> findAllBySubSelects();
+
+    @Select("select s.*, p.id p_id, p.summa p_summa, t.id t_id, t.descr t_descr" +
+            " from subscriber s " +
+            " left join payment p on s.id = p.ref_subscriber " +
+            " left join tariff t on t.id = s.ref_tariff")
+    @Results(id = "subscriberJoinMap",
+            value = {
+                    @Result(property = "id", column = "id", id = true),
+                    @Result(property = "name", column = "name"),
+                    @Result(property = "payments",
+                            javaType = List.class,
+                            many = @Many(columnPrefix = "p_", resultMap = "ru.imatveev.mybatistest.mappers.PaymentMapper.paymentMap")),
+                    @Result(property = "tariff",
+                            javaType = Tariff.class,
+                            one = @One(columnPrefix = "t_", resultMap = "ru.imatveev.mybatistest.mappers.TariffMapper.tariffMap")
+                    )
+            })
+    List<Subscriber> findAllByJoins();
 }

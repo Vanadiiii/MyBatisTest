@@ -1,12 +1,10 @@
 package ru.imatveev.mybatistest.mappers;
 
-import org.apache.ibatis.annotations.Mapper;
-import org.apache.ibatis.annotations.Param;
-import org.apache.ibatis.annotations.Result;
-import org.apache.ibatis.annotations.Select;
+import org.apache.ibatis.annotations.*;
 import ru.imatveev.mybatistest.domain.entity.Payment;
 
 import java.util.List;
+import java.util.Optional;
 
 @Mapper
 public interface PaymentMapper {
@@ -14,4 +12,12 @@ public interface PaymentMapper {
     @Result(property = "id", column = "id", id = true)
     @Result(property = "summa", column = "summa")
     List<Payment> getPaymentsBySubscriberId(@Param("id") int id);
+
+    @Select("select * from payment where id = #{id};")
+    @Results(id = "paymentMap",
+            value = {
+                    @Result(property = "id", column = "id", id = true),
+                    @Result(property = "summa", column = "summa")
+            })
+    Optional<Payment> getPaymentById(@Param("id") int id);
 }
